@@ -1,0 +1,95 @@
+<div class="login-page">
+
+  <!-- Top bar -->
+  <div class="login-topbar">
+    <div class="login-brand">
+      <img src="assets/tomato.png" alt="CookEat">
+    </div>
+    <div class="login-topbar-links">
+      <a routerLink="/login">Sign In</a>
+      <span>|</span>
+      <a routerLink="/register" class="active">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Food decorations -->
+  <div class="food-deco">
+    <span class="food f1">🥗</span>
+    <span class="food f2">🍜</span>
+    <span class="food f3">🥕</span>
+    <span class="food f4">🍋</span>
+    <span class="food f5">🌿</span>
+    <span class="food f6">🫐</span>
+    <span class="food f7">🥦</span>
+    <span class="food f8">🍅</span>
+    <span class="food f9">🌾</span>
+    <span class="food f10">🫚</span>
+  </div>
+
+  <!-- Main content -->
+  <div class="login-content">
+    <div class="login-blob register-blob">
+
+      <h1>Join us,<br><strong>create your account</strong></h1>
+
+      <div class="form-group">
+        <label>FULL NAME</label>
+        <input
+          type="text"
+          [(ngModel)]="name"
+          placeholder="Your full name"
+          (keyup.enter)="onRegister()" />
+      </div>
+
+      <div class="form-group">
+        <label>EMAIL</label>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email address"
+          (keyup.enter)="onRegister()" />
+      </div>
+
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <div class="input-wrap">
+          <input
+            [type]="showPass ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="Min. 6 characters"
+            (keyup.enter)="onRegister()" />
+          <i class="fa-solid"
+             [class]="showPass ? 'fa-eye-slash' : 'fa-eye'"
+             (click)="showPass = !showPass">
+          </i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>CONFIRM PASSWORD</label>
+        <input
+          type="password"
+          [(ngModel)]="confirm"
+          placeholder="Repeat your password"
+          (keyup.enter)="onRegister()" />
+      </div>
+
+      <div class="error-msg" *ngIf="errorMsg">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ errorMsg }}
+      </div>
+
+      <button class="btn-login" (click)="onRegister()" [disabled]="loading">
+        <span *ngIf="!loading">SIGN UP</span>
+        <span *ngIf="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </button>
+
+      <p class="switch-link">
+        Already have an account? <a routerLink="/login">Sign in</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,81 @@
+<div class="login-page">
+
+  <!-- Top bar -->
+  <div class="login-topbar">
+    <div class="login-brand">
+      <img src="assets/tomato.png" alt="CookEat">
+    </div>
+    <div class="login-topbar-links">
+      <a routerLink="/login" class="active">Sign In</a>
+      <span>|</span>
+      <a routerLink="/register">Sign Up</a>
+    </div>
+  </div>
+
+  <!-- Food decorations -->
+  <div class="food-deco">
+    <span class="food f1">🥗</span>
+    <span class="food f2">🍜</span>
+    <span class="food f3">🥕</span>
+    <span class="food f4">🍋</span>
+    <span class="food f5">🌿</span>
+    <span class="food f6">🫐</span>
+    <span class="food f7">🥦</span>
+    <span class="food f8">🍅</span>
+    <span class="food f9">🌾</span>
+    <span class="food f10">🫚</span>
+  </div>
+
+  <!-- Main content -->
+  <div class="login-content">
+
+    <!-- Blob form -->
+    <div class="login-blob">
+
+      <h1>Hello there,<br><strong>welcome to CookEat</strong></h1>
+
+      <div class="form-group">
+        <label>USERNAME</label>
+        <input
+          type="text"
+          [(ngModel)]="username"
+          placeholder="Enter your username"
+          (keyup.enter)="onLogin()" />
+      </div>
+
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <div class="input-wrap">
+          <input
+            [type]="showPass ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="Enter your password"
+            (keyup.enter)="onLogin()" />
+          <i class="fa-solid"
+             [class]="showPass ? 'fa-eye-slash' : 'fa-eye'"
+             (click)="showPass = !showPass">
+          </i>
+        </div>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <div class="error-msg" *ngIf="errorMsg">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ errorMsg }}
+      </div>
+
+      <button class="btn-login" (click)="onLogin()" [disabled]="loading">
+        <span *ngIf="!loading">LOGIN</span>
+        <span *ngIf="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </span>
+      </button>
+
+      <p class="switch-link">
+        Don't have an account? <a routerLink="/register">Sign up</a>
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

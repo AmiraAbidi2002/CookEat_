@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Cookeat</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- ✅ Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="dashboard">
+
+<nav class="dash-navbar">
+
+  <!-- Left: Brand -->
+  <div class="dash-brand">
+    <img src="assets/tomato.png" alt="CookEat">
+    <span>CookEat <strong>Admin</strong></span>
+  </div>
+
+  <!-- Center: Nav links -->
+  <div class="dash-nav-links">
+    <a [class.active]="activeSection === 'overview'"   (click)="setSection('overview')">
+      <i class="fa-solid fa-gauge"></i>
+      <span>Overview</span>
+    </a>
+    <a [class.active]="activeSection === 'categories'" (click)="setSection('categories')">
+      <i class="fa-solid fa-tags"></i>
+      <span>Categories</span>
+    </a>
+    <a [class.active]="activeSection === 'meals'"      (click)="setSection('meals')">
+      <i class="fa-solid fa-bowl-food"></i>
+      <span>Meals</span>
+    </a>
+    <a [class.active]="activeSection === 'orders'"     (click)="setSection('orders')">
+      <i class="fa-solid fa-clipboard-list"></i>
+      <span>Orders</span>
+    </a>
+  </div>
+
+  <!-- Right: icons + user -->
+  <div class="dash-navbar-right">
+
+    
+
+   
+
+    <!-- Logout -->
+    <button class="nav-icon-btn logout-btn" (click)="logout()" title="Logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+
+    <!-- Divider -->
+    <div class="nav-divider"></div>
+
+    <!-- User -->
+    <div class="user-info">
+      <div class="user-avatar">{{ currentUserInitial }}</div>
+      <span class="user-name">{{ currentUserName }}</span>
+    </div>
+
+  </div>
+
+</nav>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="dash-main">
+
+    <!-- ======= OVERVIEW ======= -->
+   <section *ngIf="activeSection === 'overview'">
+
+  <div class="section-header">
+    <h2>Dashboard Overview</h2>
+    <p>Welcome back, Admin 👋</p>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="statsLoading" style="text-align:center; padding: 2rem;">
+    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+    <p>Loading stats...</p>
+  </div>
+
+  <div *ngIf="!statsLoading">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon green"><i class="fa-solid fa-bowl-food"></i></div>
+        <div>
+          <p class="kpi-label">Total Meals</p>
+          <h3 class="kpi-value">{{ stats?.total_meals ?? '—' }}</h3>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon gold"><i class="fa-solid fa-tags"></i></div>
+        <div>
+          <p class="kpi-label">Categories</p>
+          <h3 class="kpi-value">{{ stats?.total_categories ?? '—' }}</h3>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div>
+          <p class="kpi-label">Total Orders</p>
+          <h3 class="kpi-value">{{ stats?.total_orders ?? '—' }}</h3>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon red"><i class="fa-solid fa-clock"></i></div>
+        <div>
+          <p class="kpi-label">Pending</p>
+          <h3 class="kpi-value">{{ pendingCount }}</h3>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon green"><i class="fa-solid fa-money-bill-wave"></i></div>
+        <div>
+          <p class="kpi-label">Total Revenue</p>
+          <h3 class="kpi-value">{{ stats?.total_revenue }} DT</h3>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-calendar-day"></i></div>
+        <div>
+          <p class="kpi-label">Revenue Today</p>
+          <h3 class="kpi-value">{{ stats?.revenue_today }} DT</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="card chart-card">
+        <h3 class="card-title">Revenue — Last 14 Days</h3>
+        <canvas id="revenueChart"></canvas>
+      </div>
+      <div class="card chart-card">
+  <h3 class="card-title">Orders by Status</h3>
+  <div style="max-width: 220px; margin: 0 auto;">
+    <canvas id="statusChart"></canvas>
+  </div>
+</div>
+      <div class="card chart-card">
+        <h3 class="card-title">Top 5 Meals</h3>
+        <canvas id="topMealsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="card">
+      <h3 class="card-title">Recent Orders</h3>
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Meal</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders.slice(0, 10)">
+            <td class="muted">{{ order.id }}</td>
+            <td>{{ order.client }}</td>
+            <td>{{ order.meal }}</td>
+            <td class="muted">{{ order.date }}</td>
+            <td>
+              <span class="status-badge" [class]="order.status">
+                {{ statusLabels[order.status] }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+    <!-- ======= CATEGORIES ======= -->
+    <section *ngIf="activeSection === 'categories'">
+
+      <div class="section-header">
+        <h2>Categories</h2>
+        <p>Manage your meal categories</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search categories..." [(ngModel)]="searchCategory" />
+        </div>
+        <button class="btn-add" (click)="openAddCategory()">
+          <i class="fa-solid fa-plus"></i> Add Category
+        </button>
+      </div>
+
+      <div class="card">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Meals</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cat of filteredCategories">
+              <td class="muted">{{ cat.id }}</td>
+              <td><span class="cat-badge">{{ cat.name }}</span></td>
+              <td class="muted">{{ cat.description }}</td>
+              <td>{{ cat.mealsCount }}</td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn-edit"   (click)="openEditCategory(cat)"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn-delete" (click)="confirmDeleteCategory(cat.id)"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredCategories.length === 0">
+              <td colspan="5" class="empty-row">No categories found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add/Edit Modal -->
+      <div class="modal-backdrop" *ngIf="showCategoryForm" (click)="resetAllForms()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>{{ isEditingCategory ? 'Edit Category' : 'New Category' }}</h3>
+            <button class="modal-close" (click)="resetAllForms()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Name *</label>
+              <input type="text" [(ngModel)]="categoryForm.name" placeholder="e.g. Healthy" />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea [(ngModel)]="categoryForm.description" placeholder="Describe this category..." rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="resetAllForms()">Cancel</button>
+            <button class="btn-save"   (click)="saveCategory()">
+              <i class="fa-solid fa-check"></i> {{ isEditingCategory ? 'Save' : 'Create' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirm -->
+      <div class="modal-backdrop" *ngIf="deleteCategoryId !== null" (click)="resetAllForms()">
+        <div class="modal-card modal-confirm" (click)="$event.stopPropagation()">
+          <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <h3>Delete this category?</h3>
+          <p>This action cannot be undone.</p>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="resetAllForms()">Cancel</button>
+            <button class="btn-danger" (click)="deleteCategory()"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======= MEALS ======= -->
+ <section *ngIf="activeSection === 'meals'">
+  <div class="section-header">
+    <h2>Meals</h2>
+    <p>Manage your menu items</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search meals..." [(ngModel)]="searchMeal" />
+    </div>
+    <select class="filter-select" [(ngModel)]="filterCategory">
+      <option value="">All categories</option>
+      <option *ngFor="let c of categoryOptions" [value]="c">{{ c }}</option>
+    </select>
+    <button class="btn-add" (click)="openAddMeal()">
+      <i class="fa-solid fa-plus"></i> Add Meal
+    </button>
+  </div>
+
+  <div class="meals-grid">
+    <div class="meal-card" *ngFor="let meal of filteredMeals">
+      <div class="meal-img-wrap">
+        <img [src]="meal.image_url" [alt]="meal.title">
+        <span class="avail-badge" [class.unavailable]="!meal.available">
+          {{ meal.available ? 'Available' : 'Unavailable' }}
+        </span>
+      </div>
+      <div class="meal-info">
+        <div class="meal-top">
+          <h4>{{ meal.title }}</h4>
+          <span class="meal-price">{{ meal.price }} DT</span>
+        </div>
+        <div class="meal-meta">
+          <span class="meta-tag category">{{ meal.category }}</span>
+          <span class="meta-tag" *ngIf="meal.difficulty">{{ meal.difficulty }}</span>
+          <span class="meta-tag duration" *ngIf="meal.duration">
+            <i class="fa-regular fa-clock"></i> {{ meal.duration }} min
+          </span>
+        </div>
+        <div class="meal-actions">
+          <button class="btn-toggle" [class.on]="meal.available" (click)="toggleAvailability(meal)">
+            <i class="fa-solid" [class.fa-eye]="meal.available" [class.fa-eye-slash]="!meal.available"></i>
+          </button>
+          <button class="btn-edit" (click)="openEditMeal(meal)">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn-delete" (click)="confirmDeleteMeal(meal.id)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredMeals.length === 0" class="empty-row">
+      No meals found
+    </div>
+  </div>
+
+  <!-- Delete Meal Confirm -->
+  <div class="modal-backdrop" *ngIf="deleteMealId !== null" (click)="resetAllForms()">
+    <div class="modal-card modal-confirm" (click)="$event.stopPropagation()">
+      <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3>Delete this meal?</h3>
+      <p>This action cannot be undone.</p>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="resetAllForms()">Cancel</button>
+        <button class="btn-danger" (click)="deleteMeal()">
+          <i class="fa-solid fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+<!-- Add/Edit Meal Modal -->
+<div class="modal-backdrop" *ngIf="showMealForm" (click)="resetAllForms()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditingMeal ? 'Edit Meal' : 'New Meal' }}</h3>
+      <button class="modal-close" (click)="resetAllForms()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" [(ngModel)]="mealForm.title" placeholder="e.g. Pizza Margherita" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="mealForm.description" placeholder="Describe the meal..." rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Price (DT) *</label>
+        <input type="number" [(ngModel)]="mealForm.price" placeholder="e.g. 12.5" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label>Category *</label>
+        <select [(ngModel)]="mealForm.category">
+          <option value="">Select a category</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Image</label>
+        <input type="file" accept="image/*" (change)="onMealImageChange($event)" />
+        <img *ngIf="mealForm.image_url" [src]="mealForm.image_url"
+             style="margin-top:8px; max-height:100px; border-radius:8px;" />
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="resetAllForms()">Cancel</button>
+      <button class="btn-save" (click)="saveMeal()">
+        <i class="fa-solid fa-check"></i> {{ isEditingMeal ? 'Save' : 'Create' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+</section>
+
+    <!-- ======= ORDERS ======= -->
+    <section *ngIf="activeSection === 'orders'">
+
+      <div class="section-header">
+        <h2>Orders</h2>
+        <p>Manage and update order statuses</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search by client or meal..." [(ngModel)]="searchOrder" />
+        </div>
+        <select class="filter-select" [(ngModel)]="filterStatus">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="preparing">Preparing</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="paid">Paid</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Client</th>
+              <th>Meal</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of filteredOrders">
+              <td class="muted">{{ order.id }}</td>
+              <td>{{ order.client }}</td>
+              <td>{{ order.meal }}</td>
+              <td class="muted">{{ order.date }}</td>
+              <td>
+                <span class="status-badge" [class]="order.status">
+                  {{ statusLabels[order.status] }}
+                </span>
+              </td>
+              <td>
+                <select class="status-select" [ngModel]="order.status" (ngModelChange)="updateStatus(order, $event)">
+                  <option value="pending">Pending</option>
+                  <option value="preparing">Preparing</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </td>
+            </tr>
+            <tr *ngIf="filteredOrders.length === 0">
+              <td colspan="6" class="empty-row">No orders found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+</body>
+</html>

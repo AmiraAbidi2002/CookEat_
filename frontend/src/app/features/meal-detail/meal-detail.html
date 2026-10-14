@@ -1,0 +1,173 @@
+<div class="meal-detail-page" *ngIf="meal">
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="assets/tomato.png" class="logo-img" alt="CookEat">
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/" fragment="about">The Concept</a></li>
+      <li><a routerLink="/" fragment="menu">On the Menu</a></li>
+      <li><a routerLink="/" fragment="contact">Need Help?</a></li>
+    </ul>
+    <div class="navbar-right">
+      <a routerLink="/cart" class="nav-icon-link">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </a>
+      <a routerLink="/profile" class="btn-client">
+        <i class="fa-solid fa-user"></i> My Profile
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== BREADCRUMB ===== -->
+  <div class="breadcrumb-bar">
+    <a routerLink="/">Home</a>
+    <span> / </span>
+    <span>{{ meal.title }}</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="meal-hero">
+    <div class="meal-hero-img">
+      <img [src]="meal.image_url" [alt]="meal.title">
+      <span class="meal-category-badge">{{ categoryName }}</span>
+    </div>
+
+    <div class="meal-hero-info">
+      <h1>{{ meal.title }}</h1>
+
+      <p class="meal-description" *ngIf="shortDescription">{{ shortDescription }}</p>
+
+      <div class="meal-price">{{ meal.price }} <span class="price-currency">DT</span></div>
+      <div class="detail-block">
+      <div class="detail-block-header">
+        <span class="block-icon"><i class="fa-solid fa-tag"></i></span>
+        <h2>Category</h2>
+      </div>
+      <div class="category-pill">
+        <i class="fa-solid fa-utensils"></i>
+        {{ categoryName }}
+      </div>
+    </div>
+
+      <div class="meal-order">
+        <div class="qty-control">
+          <button (click)="decrement()">−</button>
+          <span>{{ quantity }}</span>
+          <button (click)="increment()">+</button>
+        </div>
+        <button class="btn-add-cart" (click)="addToCart()" [class.added]="addedToCart">
+          <i class="fa-solid"
+             [class.fa-circle-check]="addedToCart"
+             [class.fa-cart-plus]="!addedToCart"></i>
+          {{ addedToCart ? 'Added to cart!' : 'Add to Cart' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL SECTIONS -->
+  <div class="meal-body">
+
+    <!-- RECIPE STEPS -->
+    <div class="detail-block" *ngIf="steps.length > 0">
+      <div class="detail-block-header">
+        <span class="block-icon"><i class="fa-solid fa-list-ol"></i></span>
+        <h2>Recipe Steps</h2>
+      </div>
+      <ol class="steps-list">
+        <li class="recipe-step" *ngFor="let step of steps; let i = index">
+          <div class="step-number">{{ i + 1 }}</div>
+          <div class="step-content"><p>{{ step }}</p></div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- INGREDIENTS -->
+    <div class="detail-block" *ngIf="ingredients.length > 0">
+      <div class="detail-block-header">
+        <span class="block-icon"><i class="fa-solid fa-carrot"></i></span>
+        <h2>Ingredients</h2>
+      </div>
+      <ul class="ingredients-list">
+        <li class="ingredient-item" *ngFor="let ing of ingredients">
+          <i class="fa-solid fa-circle-check ing-check"></i>
+          <span>{{ ing }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="detail-block" *ngIf="videoUrl">
+      <div class="detail-block-header">
+        <span class="block-icon"><i class="fa-brands fa-youtube"></i></span>
+        <h2>Video</h2>
+      </div>
+      <div class="video-wrapper">
+        <iframe [src]="videoUrl" frameborder="0" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- CATEGORY -->
+    
+
+  </div>
+  
+  <!-- ===== YOU MIGHT ALSO LIKE ===== -->
+  <div class="similar-section" *ngIf="similarMeals.length > 0">
+    <div class="similar-inner">
+      <h2><i class="fa-solid fa-heart"></i> You might also like</h2>
+      <div class="similar-grid">
+        <div class="similar-card"
+             *ngFor="let m of similarMeals"
+             [routerLink]="['/meal', m.id]">
+          <div class="similar-img">
+            <img [src]="m.image_url" [alt]="m.title">
+          </div>
+          <div class="similar-info">
+            <h4>{{ m.title }}</h4>
+            <div class="similar-meta">
+              <span class="similar-price">{{ m.price }} DT</span>
+              <span class="similar-cat">{{ m.category }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+    </div>
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/cart">My Cart</a>
+      <a routerLink="/orders">My Orders</a>
+    </div>
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+      <div class="contact-item">
+        <i class="fa-solid fa-phone"></i>
+        <span>+216 29 019 029</span>
+      </div>
+      <div class="contact-item">
+        <i class="fa-solid fa-envelope"></i>
+        <span>contact@cookeat.tn</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="not-found" *ngIf="!meal">
+  <i class="fa-solid fa-bowl-food fa-3x"></i>
+  <h2>Meal not found</h2>
+  <a routerLink="/">Back to home</a>
+</div>

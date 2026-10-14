@@ -1,0 +1,173 @@
+<div class="meals-page">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" [class.scrolled]="navScrolled">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="assets/tomato.png" class="logo-img" alt="CookEat">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a routerLink="/">Home</a></li>
+      <li><a routerLink="/meals">Meals</a></li>
+      <li><a routerLink="/about">About</a></li>
+    </ul>
+
+    <div class="navbar-right">
+      <a routerLink="/cart" class="nav-icon-link">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </a>
+
+      <button class="btn-client" routerLink="/profile" *ngIf="isLoggedIn">
+        My Profile
+      </button>
+
+      <button class="btn-client" routerLink="/login" *ngIf="!isLoggedIn">
+        Login
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="meals-hero">
+    <div class="meals-hero-inner">
+      <span class="meals-hero-eyebrow">🍽️ Fresh & Delicious</span>
+      <h1>Discover our <span>best meals</span></h1>
+      <p>Fresh ingredients, amazing taste, delivered to your home.</p>
+
+      <div class="meals-search">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Search your meal..."
+          (keyup.enter)="onSearch()"
+        />
+        <button (click)="onSearch()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <div class="features-bar">
+    <div class="feature-item">
+      <div class="feature-icon">🚚</div>
+      <p>Fast delivery<br>under 30 min</p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-icon">🌿</div>
+      <p>Fresh local<br>ingredients</p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-icon">👨‍🍳</div>
+      <p>Prepared by<br>top chefs</p>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-icon">🔥</div>
+      <p>Hot meals<br>everyday</p>
+    </div>
+  </div>
+
+  <!-- ===== MEALS GRID ===== -->
+  <section class="meals-section">
+    <div class="meals-section-header">
+      <h2>All Meals</h2>
+      <span class="meals-count">{{ filteredMeals.length }} meals available</span>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-wrap" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading meals...</p>
+    </div>
+
+    <!-- No results -->
+    <div class="no-results" *ngIf="!isLoading && filteredMeals.length === 0">
+      <i class="fas fa-search"></i>
+      No meal found for "{{ searchQuery }}"
+    </div>
+
+    <!-- Grid -->
+    <div class="meals-grid" *ngIf="!isLoading && filteredMeals.length > 0">
+      <div
+        class="meal-card"
+        *ngFor="let meal of filteredMeals"
+        (click)="navigateToMeal(meal.id)"
+      >
+        <div class="meal-card-img-wrap">
+          <img [src]="meal.image_url || 'assets/placeholder.jpg'" [alt]="meal.title">
+
+          <span class="meal-badge" *ngIf="meal.category">
+            {{ meal.category }}
+          </span>
+
+          <div class="meal-card-overlay">
+            <button class="btn-add-to-cart" (click)="$event.stopPropagation()">
+              <i class="fa-solid fa-cart-plus"></i>
+              Add to cart
+            </button>
+          </div>
+        </div>
+
+        <div class="meal-card-body">
+          <h3>{{ meal.title }}</h3>
+
+          <div class="meal-card-meta">
+            <span class="meta-tag" *ngIf="meal.prep_time">
+              <i class="fas fa-clock"></i> {{ meal.prep_time }} min
+            </span>
+
+            <span class="meta-tag" *ngIf="meal.calories">
+              <i class="fas fa-fire"></i> {{ meal.calories }} kcal
+            </span>
+          </div>
+
+          <div class="meal-card-footer">
+            <div class="meal-price">
+              {{ meal.price }} <span>DT</span>
+            </div>
+
+            <button class="btn-detail" (click)="navigateToMeal(meal.id); $event.stopPropagation()">
+              View →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+      <p class="footer-desc">
+        Fresh meals every day with premium ingredients and fast delivery.
+      </p>
+    </div>
+
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/cart">Cart</a>
+      <a routerLink="/profile">Profile</a>
+    </div>
+
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+      <div class="contact-item">
+        <i class="fa-solid fa-phone contact-icon"></i>
+        <span>+216 29 019 029</span>
+      </div>
+      <div class="contact-item">
+        <i class="fa-solid fa-envelope contact-icon"></i>
+        <span>contact@cookeat.tn</span>
+      </div>
+    </div>
+  </footer>
+
+</div>

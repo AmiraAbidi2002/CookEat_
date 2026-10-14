@@ -1,0 +1,215 @@
+<div class="cart-page">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" [class.scrolled]="navScrolled">
+    <div class="logo">
+      <a routerLink="/">
+        <img src="assets/tomato.png" class="logo-img" alt="CookEat">
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a routerLink="/" fragment="about">The Concept</a></li>
+      <li><a routerLink="/" fragment="menu">On the Menu</a></li>
+      <li><a routerLink="/" fragment="contact">Need Help?</a></li>
+    </ul>
+
+    <div class="navbar-right">
+      <a routerLink="/profile" class="nav-icon-link" title="Profile">
+        <i class="fa-solid fa-user"></i>
+      </a>
+
+      <a routerLink="/orders" class="nav-icon-link" title="Orders">
+        <i class="fa-solid fa-clipboard-list"></i>
+      </a>
+
+      <button class="btn-logout-nav" (click)="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== TOP BANNER ===== -->
+  <div class="cart-banner">
+    <div class="cart-banner-inner">
+      <div>
+        <h1><i class="fa-solid fa-cart-shopping"></i> My Cart</h1>
+        <p>{{ totalItems }} item(s) in your cart</p>
+      </div>
+
+      <a routerLink="/" class="btn-continue">
+        <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== CONTENT ===== -->
+  <div class="cart-content">
+
+    <!-- ===== EMPTY ===== -->
+    <div class="cart-empty" *ngIf="items.length === 0 && !checkoutDone">
+      <i class="fa-solid fa-cart-shopping fa-3x"></i>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added anything yet.</p>
+      <a routerLink="/" class="btn-discover">Discover our meals →</a>
+    </div>
+
+    <!-- ===== SUCCESS ===== -->
+    <div class="cart-empty" *ngIf="checkoutDone">
+      <i class="fa-solid fa-circle-check fa-3x" style="color: #1e4d2b"></i>
+      <h2>Order placed successfully!</h2>
+      <p>Redirecting to your orders...</p>
+    </div>
+
+    <!-- ===== CART ===== -->
+    <div class="cart-layout" *ngIf="items.length > 0 && !checkoutDone">
+
+      <!-- LEFT -->
+      <div class="cart-items">
+
+        <div class="cart-items-header">
+          <h3>Order Items</h3>
+          <button class="btn-clear" (click)="clearCart()">
+            <i class="fa-solid fa-trash"></i> Clear Cart
+          </button>
+        </div>
+
+        <div class="cart-item" *ngFor="let item of items">
+
+          <!-- IMAGE -->
+          <div class="item-img">
+            <img [src]="item.meal.image_url" [alt]="item.meal.title">
+          </div>
+
+          <!-- INFO -->
+          <div class="item-info">
+            <h4>{{ item.meal.title }}</h4>
+            <span class="item-category">
+              {{ item.meal.category?.name || 'Meal' }}
+            </span>
+            <span class="item-unit-price">
+              {{ item.meal.price }} DT / unit
+            </span>
+          </div>
+
+          <!-- QTY -->
+          <div class="item-qty">
+            <button class="qty-btn" (click)="decrement(item)">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+
+            <span class="qty-value">{{ item.quantity }}</span>
+
+            <button class="qty-btn" (click)="increment(item)">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- TOTAL -->
+          <div class="item-total">
+            {{ item.meal.price * item.quantity }} DT
+          </div>
+
+          <!-- REMOVE -->
+          <button class="btn-remove"
+                  (click)="removeItem(item.id)"
+                  title="Remove">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="cart-summary">
+
+        <h3>Order Summary</h3>
+
+        <div class="summary-row">
+          <span>Subtotal ({{ totalItems }} items)</span>
+          <span>{{ subtotal }} DT</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery fee</span>
+          <span>{{ deliveryFee }} DT</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>{{ total }} DT</span>
+        </div>
+
+        <button class="btn-checkout" (click)="checkout()">
+          <i class="fa-solid fa-lock"></i> Place Order
+        </button>
+
+        <a routerLink="/" class="btn-back-shop">
+          <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+        </a>
+
+        <!-- INFO -->
+        <div class="delivery-info">
+          <div class="delivery-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Delivery within 24–48h</span>
+          </div>
+
+          <div class="delivery-item">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Secure payment</span>
+          </div>
+
+          <div class="delivery-item">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Easy returns</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="contact" class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+      <p class="footer-desc">
+        No more trips to the supermarket. CookEat gives you access to
+        new recipes every month.
+      </p>
+    </div>
+
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/profile">My Profile</a>
+      <a routerLink="/orders">My Orders</a>
+    </div>
+
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+
+      <div class="contact-item">
+        <i class="fa-solid fa-phone contact-icon"></i>
+        <span>+216 29 019 029</span>
+      </div>
+
+      <div class="contact-item">
+        <i class="fa-solid fa-envelope contact-icon"></i>
+        <span>contact@cookeat.tn</span>
+      </div>
+
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</div>

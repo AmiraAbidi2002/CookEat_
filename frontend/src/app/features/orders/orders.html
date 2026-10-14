@@ -1,0 +1,218 @@
+<div class="orders-page">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" [class.scrolled]="navScrolled">
+    <div class="logo">
+      <a routerLink="/"><img src="assets/tomato.png" class="logo-img" alt="CookEat"></a>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/" fragment="about">The Concept</a></li>
+      <li><a routerLink="/" fragment="menu">On the Menu</a></li>
+      <li><a routerLink="/" fragment="contact">Need Help?</a></li>
+    </ul>
+    <div class="navbar-right">
+      <a routerLink="/profile" class="nav-icon-link" title="Profile">
+        <i class="fa-solid fa-user"></i>
+      </a>
+      <a routerLink="/cart" class="nav-icon-link" title="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </a>
+      <button class="btn-logout-nav" (click)="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== PAGE HEADER ===== -->
+  <div class="page-header">
+    <h1>MY ORDERS</h1>
+    <div class="breadcrumb">
+      <a routerLink="/"><i class="fa-solid fa-house"></i> Home</a>
+      <span>/</span>
+      <a routerLink="/profile">Profile</a>
+      <span>/</span>
+      <span>Orders</span>
+    </div>
+  </div>
+
+  <!-- ===== CONTENT ===== -->
+  <div class="orders-content">
+
+    <!-- Stats bar -->
+  <div class="orders-stats">
+  <div class="stat-pill">
+    <i class="fa-solid fa-box"></i>
+    <span>{{ orders.length }} Total</span>
+  </div>
+  <div class="stat-pill delivered">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>{{ deliveredCount }} Delivered</span>
+  </div>
+  <div class="stat-pill pending">
+    <i class="fa-solid fa-clock"></i>
+    <span>{{ pendingCount }} Pending</span>
+  </div>
+  <div class="stat-pill cancelled">
+    <i class="fa-solid fa-circle-xmark"></i>
+    <span>{{ cancelledCount }} Cancelled</span>
+  </div>
+  <div class="stat-pill paid">
+  <i class="fa-solid fa-credit-card"></i>
+  <span>{{ paidCount }} Paid</span>
+</div>
+</div>
+
+    <!-- Filter -->
+    <div class="orders-toolbar">
+      <h3>Order History</h3>
+      <div class="filter-tabs">
+        <button [class.active]="filterStatus === ''"           (click)="filterStatus = ''">All</button>
+        <button [class.active]="filterStatus === 'pending'"    (click)="filterStatus = 'pending'">Pending</button>
+        <button [class.active]="filterStatus === 'preparing'"  (click)="filterStatus = 'preparing'">Preparing</button>
+        <button [class.active]="filterStatus === 'delivered'"  (click)="filterStatus = 'delivered'">Delivered</button>
+        <button [class.active]="filterStatus === 'cancelled'"  (click)="filterStatus = 'cancelled'">Cancelled</button>
+        <button [class.active]="filterStatus === 'paid'" (click)="filterStatus = 'paid'">Paid</button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="orders-empty" *ngIf="filteredOrders.length === 0">
+      <i class="fa-solid fa-box-open fa-3x"></i>
+      <h2>No orders found</h2>
+      <p>You haven't placed any orders yet.</p>
+      <a routerLink="/" class="btn-discover">Start ordering →</a>
+    </div>
+
+    <!-- Orders list -->
+    <div class="orders-list" *ngIf="filteredOrders.length > 0">
+      <div class="order-card" *ngFor="let order of filteredOrders">
+
+        <!-- Order header -->
+        <div class="order-header" (click)="toggleOrder(order.id)">
+
+          <div class="order-id">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Order #{{ order.id }}</span>
+          </div>
+
+          <div class="order-date">
+            <i class="fa-regular fa-calendar"></i>
+            <span>{{ order.created_at }}</span>
+          </div>
+
+          <div class="order-items-count">
+            <i class="fa-solid fa-bowl-food"></i>
+            <span>{{ getOrderItemCount(order) }} item(s)</span>
+          </div>
+
+          <div class="order-total-preview">
+            <span>{{ getOrderTotal(order) }} DT</span>
+          </div>
+
+          <span class="status-badge" [class]="order.status">
+            <i class="fa-solid" [class]="statusIcons[order.status]"></i>
+            {{ statusLabels[order.status] }}
+          </span>
+
+          <i class="fa-solid toggle-icon"
+             [class]="expandedOrderId === order.id ? 'fa-chevron-up' : 'fa-chevron-down'">
+          </i>
+
+        </div>
+
+        <!-- Order detail (expandable) -->
+        <div class="order-detail" *ngIf="expandedOrderId === order.id">
+
+          <table class="detail-table">
+            <thead>
+              <tr>
+                <th>Meal</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of order.items">
+                <td>
+                  <div class="meal-name">
+                    <i class="fa-solid fa-bowl-food"></i>
+                    {{ item.meal.name }}
+                  </div>
+                </td>
+                <td>× {{ item.quantity }}</td>
+                <td>{{ item.meal.price }} DT</td>
+                <td class="item-subtotal">{{ item.meal.price * item.quantity }} DT</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="detail-summary">
+            <div class="detail-row">
+              <span>Subtotal</span>
+              <span>{{ getOrderSubtotal(order) }} DT</span>
+            </div>
+            <div class="detail-row">
+              <span>Delivery</span>
+              <span>{{ order.total_price - getOrderSubtotal(order) | number:'1.0-0' }} DT</span>
+            </div>
+            <div class="detail-divider"></div>
+            <div class="detail-row total">
+              <span>Total</span>
+              <span>{{ order.total_price }} DT</span>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn-reorder" *ngIf="order.status === 'delivered'">
+              <i class="fa-solid fa-rotate-right"></i> Reorder
+            </button>
+            <button class="btn-cancel-order"
+              *ngIf="order.status === 'pending'|| order.status === 'paid'">
+              <i class="fa-solid fa-xmark"></i> Cancel Order
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+      <p class="footer-desc">
+        No more trips to the supermarket. CookEat gives you access to
+        new recipes every month.
+      </p>
+    </div>
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/profile">My Profile</a>
+      <a routerLink="/cart">My Cart</a>
+    </div>
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+      <div class="contact-item">
+        <i class="fa-solid fa-phone contact-icon"></i>
+        <span>+216 29 019 029</span>
+      </div>
+      <div class="contact-item">
+        <i class="fa-solid fa-envelope contact-icon"></i>
+        <span>contact@cookeat.tn</span>
+      </div>
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</div>

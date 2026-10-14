@@ -1,0 +1,6 @@
+<div *ngFor="let meal of meals">
+  <h2>{{ meal.title }}</h2>
+  <p>{{ meal.description }}</p>
+  <p>{{ meal.price }} DT</p>
+  <img [src]="meal.image_url" width="200"  [alt]="meal.title">
+</div>

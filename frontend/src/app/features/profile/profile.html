@@ -1,0 +1,352 @@
+<div class="profile-page">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" [class.scrolled]="navScrolled">
+    <div class="logo">
+      <a routerLink="/"><img src="assets/tomato.png" class="logo-img" alt="CookEat"></a>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/" fragment="about">The Concept</a></li>
+      <li><a routerLink="/" fragment="menu">On the Menu</a></li>
+      <li><a routerLink="/" fragment="contact">Need Help?</a></li>
+    </ul>
+    <div class="navbar-right">
+      <a routerLink="/cart" class="nav-icon-link" title="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </a>
+      <a routerLink="/orders" class="nav-icon-link" title="Orders">
+        <i class="fa-solid fa-clipboard-list"></i>
+      </a>
+      <button class="btn-logout-nav" (click)="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </nav>
+<br>
+<br>
+  <!-- ===== MAIN LAYOUT ===== -->
+  <div class="profile-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="profile-sidebar">
+
+      <!-- User card -->
+      <div class="sidebar-user">
+        <div class="sidebar-avatar-wrap">
+          <div class="sidebar-avatar" *ngIf="!avatarUrl">{{ userInitial }}</div>
+          <img [src]="avatarUrl" class="sidebar-avatar-img" *ngIf="avatarUrl" alt="Profile">
+          <label class="avatar-edit-btn" title="Change photo">
+            <i class="fa-solid fa-camera"></i>
+            <input type="file" accept="image/*" (change)="onAvatarChange($event)" hidden>
+          </label>
+        </div>
+        <h3 class="sidebar-name">{{ name }}</h3>
+        <p class="sidebar-email">{{ email }}</p>
+        <span class="sidebar-badge">
+          <i class="fa-solid fa-circle-check"></i> CookEat Member
+        </span>
+      </div>
+
+      <!-- Stats -->
+      <div class="sidebar-stats">
+        <div class="sidebar-stat">
+          <span class="sidebar-stat-value">{{ orders.length }}</span>
+          <span class="sidebar-stat-label">Orders</span>
+        </div>
+        <div class="sidebar-stat">
+          <span class="sidebar-stat-value">{{ deliveredCount }}</span>
+          <span class="sidebar-stat-label">Delivered</span>
+        </div>
+        <div class="sidebar-stat">
+          <span class="sidebar-stat-value">{{ totalSpent }} DT</span>
+          <span class="sidebar-stat-label">Spent</span>
+        </div>
+      </div>
+
+      <!-- Nav items -->
+      <nav class="sidebar-nav">
+        <button [class.active]="activeTab === 'info'"      (click)="setTab('info')">
+          <i class="fa-solid fa-user"></i> Personal Info
+        </button>
+        <button [class.active]="activeTab === 'orders'"    (click)="setTab('orders')">
+          <i class="fa-solid fa-clipboard-list"></i> My Orders
+          <span class="nav-count">{{ orders.length }}</span>
+        </button>
+        <button [class.active]="activeTab === 'favorites'" (click)="setTab('favorites')">
+          <i class="fa-solid fa-heart"></i> Favorites
+          <span class="nav-count">{{ favorites.length }}</span>
+        </button>
+        <button [class.active]="activeTab === 'activity'"  (click)="setTab('activity')">
+          <i class="fa-solid fa-clock-rotate-left"></i> Activity
+        </button>
+        <button [class.active]="activeTab === 'password'"  (click)="setTab('password')">
+          <i class="fa-solid fa-lock"></i> Password
+        </button>
+      </nav>
+
+      <!-- Quick links -->
+      <div class="sidebar-quick">
+        <a routerLink="/cart"   class="quick-link"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
+        <a routerLink="/orders" class="quick-link"><i class="fa-solid fa-box"></i> Track Orders</a>
+        <button class="quick-link logout" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="profile-main">
+
+      <!-- PERSONAL INFO -->
+      <div class="tab-panel" *ngIf="activeTab === 'info'">
+        <div class="panel-header">
+          <div>
+            <h2>Personal Information</h2>
+            <p>Manage your account details</p>
+          </div>
+          <button class="btn-edit" (click)="editingInfo = !editingInfo">
+            <i class="fa-solid" [class]="editingInfo ? 'fa-xmark' : 'fa-pen'"></i>
+            {{ editingInfo ? 'Cancel' : 'Edit Profile' }}
+          </button>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <label><i class="fa-solid fa-user"></i> Full Name</label>
+            <input *ngIf="editingInfo" type="text"  [(ngModel)]="name"    placeholder="Your name" />
+            <p     *ngIf="!editingInfo">{{ name    || '—' }}</p>
+          </div>
+          <div class="info-card">
+            <label><i class="fa-solid fa-envelope"></i> Email</label>
+            <input *ngIf="editingInfo" type="email" [(ngModel)]="email"   placeholder="Your email" />
+            <p     *ngIf="!editingInfo">{{ email   || '—' }}</p>
+          </div>
+          <div class="info-card">
+            <label><i class="fa-solid fa-phone"></i> Phone</label>
+            <input *ngIf="editingInfo" type="tel"   [(ngModel)]="phone"   placeholder="+216 XX XXX XXX" />
+            <p     *ngIf="!editingInfo">{{ phone   || '—' }}</p>
+          </div>
+          <div class="info-card">
+            <label><i class="fa-solid fa-location-dot"></i> Address</label>
+            <input *ngIf="editingInfo" type="text"  [(ngModel)]="address" placeholder="Your address" />
+            <p     *ngIf="!editingInfo">{{ address || '—' }}</p>
+          </div>
+        </div>
+
+        <button class="btn-save" *ngIf="editingInfo" (click)="saveInfo()">
+          <i class="fa-solid fa-check"></i> Save Changes
+        </button>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="tab-panel" *ngIf="activeTab === 'orders'">
+        <div class="panel-header">
+          <div>
+            <h2>My Orders</h2>
+            <p>Track all your past orders</p>
+          </div>
+          <span class="header-badge">{{ orders.length }} total</span>
+        </div>
+
+        <div class="orders-list">
+          <div class="order-card" *ngFor="let order of orders">
+            <div class="order-icon">
+              <i class="fa-solid fa-bowl-food"></i>
+            </div>
+            <div class="order-info">
+              <h4>{{ order.meal }}</h4>
+              <p>{{ order.date }}</p>
+            </div>
+            <div class="order-price">{{ order.price }} DT</div>
+            <span class="status-badge" [class]="order.status">
+              {{ statusLabels[order.status] }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAVORITES -->
+      <div class="tab-panel" *ngIf="activeTab === 'favorites'">
+        <div class="panel-header">
+          <div>
+            <h2>Favorite Meals</h2>
+            <p>Your saved recipes</p>
+          </div>
+          <span class="header-badge">{{ favorites.length }} meals</span>
+        </div>
+
+        <div class="favorites-grid">
+          <div class="fav-card" *ngFor="let meal of favorites">
+            <div class="fav-img">
+              <img [src]="meal.image_url" [alt]="meal.title">
+              <button class="fav-remove" (click)="removeFavorite(meal.id)" title="Remove">
+                <i class="fa-solid fa-heart-crack"></i>
+              </button>
+            </div>
+            <div class="fav-body">
+              <div class="fav-top">
+                <h4>{{ meal.title }}</h4>
+                <span class="fav-price">{{ meal.price }} DT</span>
+              </div>
+              <span class="fav-category">{{ meal.category }}</span>
+              <div class="fav-actions">
+                <button class="btn-add-cart">
+                  <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="favorites.length === 0">
+            <i class="fa-solid fa-heart fa-3x"></i>
+            <p>No favorites yet</p>
+            <a routerLink="/">Discover meals →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="tab-panel" *ngIf="activeTab === 'activity'">
+        <div class="panel-header">
+          <div>
+            <h2>Recent Activity</h2>
+            <p>Your latest actions</p>
+          </div>
+        </div>
+
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let a of activities">
+            <div class="activity-icon" [style.background]="a.color + '20'" [style.color]="a.color">
+              <i class="fa-solid" [class]="a.icon"></i>
+            </div>
+            <div class="activity-info">
+              <p>{{ a.text }}</p>
+              <span>{{ a.time }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="tab-panel" *ngIf="activeTab === 'password'">
+        <div class="panel-header">
+          <div>
+            <h2>Change Password</h2>
+            <p>Keep your account secure</p>
+          </div>
+        </div>
+
+        <div class="pass-form">
+          <div class="form-group">
+            <label>Current Password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input [type]="showCurrentPass ? 'text' : 'password'"
+                [(ngModel)]="currentPassword" placeholder="••••••••" />
+              <i class="fa-solid toggle-eye"
+                 [class]="showCurrentPass ? 'fa-eye-slash' : 'fa-eye'"
+                 (click)="showCurrentPass = !showCurrentPass"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input [type]="showNewPass ? 'text' : 'password'"
+                [(ngModel)]="newPassword" placeholder="Min. 6 characters" />
+              <i class="fa-solid toggle-eye"
+                 [class]="showNewPass ? 'fa-eye-slash' : 'fa-eye'"
+                 (click)="showNewPass = !showNewPass"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" [(ngModel)]="confirmPassword" placeholder="••••••••" />
+            </div>
+          </div>
+
+          <div class="pass-msg success" *ngIf="passwordMsg && !passwordError">
+            <i class="fa-solid fa-circle-check"></i> {{ passwordMsg }}
+          </div>
+          <div class="pass-msg error" *ngIf="passwordMsg && passwordError">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ passwordMsg }}
+          </div>
+
+          <button class="btn-save" (click)="savePassword()">
+            <i class="fa-solid fa-shield-halved"></i> Update Password
+          </button>
+        </div>
+      </div>
+
+    <!-- ===== FEATURED MEALS ===== -->
+<section class="featured-meals-section">
+  <div class="panel-header">
+    <div>
+      <h2>Discover More Meals</h2>
+      <p>Fresh recipes you may love</p>
+    </div>
+
+    <button class="btn-view-all" routerLink="/meals">
+      View all meals
+    </button>
+  </div>
+
+  <div class="featured-meals-slider">
+    <div
+      class="meal-card-mini"
+      *ngFor="let meal of featuredMeals"
+      (click)="goToMeal(meal.id)"
+    >
+      <img [src]="meal.image_url" [alt]="meal.title">
+      <div class="meal-mini-body">
+        <h4>{{ meal.title }}</h4>
+        <span>{{ meal.price }} DT</span>
+      </div>
+    </div>
+  </div>
+</section>
+    </main>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="contact" class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+      <p class="footer-desc">
+        No more trips to the supermarket. CookEat gives you access to
+        new recipes every month. Healthy or indulgent, there's something for every taste.
+      </p>
+    </div>
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/cart">My Cart</a>
+      <a routerLink="/orders">My Orders</a>
+    </div>
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+      <div class="contact-item">
+        <i class="fa-solid fa-phone contact-icon"></i>
+        <span>+216 29 019 029</span>
+      </div>
+      <div class="contact-item">
+        <i class="fa-solid fa-envelope contact-icon"></i>
+        <span>contact@cookeat.tn</span>
+      </div>
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Secret admin zone -->
+  <div class="admin-secret-zone" routerLink="/login"></div>
+
+</div>

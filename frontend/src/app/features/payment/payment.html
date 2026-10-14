@@ -1,0 +1,147 @@
+<div class="payment-page">
+
+  <nav class="navbar" [class.scrolled]="navScrolled">
+    <div class="logo">
+      <a routerLink="/"><img src="assets/tomato.png" class="logo-img" alt="CookEat"></a>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/" fragment="about">The Concept</a></li>
+      <li><a routerLink="/" fragment="menu">On the Menu</a></li>
+      <li><a routerLink="/" fragment="contact">Need Help?</a></li>
+    </ul>
+    <div class="navbar-right">
+      <a routerLink="/cart" class="nav-icon-link"><i class="fa-solid fa-cart-shopping"></i></a>
+      <a routerLink="/profile" class="nav-icon-link"><i class="fa-solid fa-user"></i></a>
+      <button class="btn-logout-nav" (click)="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>PAYMENT</h1>
+    <div class="breadcrumb">
+      <a routerLink="/"><i class="fa-solid fa-house"></i> Home</a>
+      <span>/</span>
+      <a routerLink="/cart">Cart</a>
+      <span>/</span>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  <div class="payment-success" *ngIf="paymentOk">
+    <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+    <h2>Payment successful!</h2>
+    <p>Your order has been confirmed. Redirecting to your orders...</p>
+  </div>
+
+  <div class="payment-content" *ngIf="!paymentOk">
+    <div class="payment-layout">
+
+      <div class="payment-form-wrap">
+        <div class="form-card">
+          <h3><i class="fa-solid fa-lock"></i> Secure Payment</h3>
+
+          <div class="stripe-badges">
+            <span><i class="fa-brands fa-stripe"></i> Powered by Stripe</span>
+            <span><i class="fa-solid fa-shield-halved"></i> SSL Secured</span>
+          </div>
+
+          <!-- Stripe Card Element - fonctionne SANS clientSecret -->
+          <div class="stripe-card-wrapper" style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: white; margin: 10px 0;">
+            <ngx-stripe-card
+              [options]="cardOptions"
+              [elementsOptions]="elementsOptions">
+            </ngx-stripe-card>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMsg">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ errorMsg }}
+          </div>
+
+          <button class="btn-pay" (click)="pay()" [disabled]="paying">
+            <span *ngIf="!paying">
+              <i class="fa-solid fa-lock"></i> Pay {{ total }} DT
+            </span>
+            <span *ngIf="paying">
+              <i class="fa-solid fa-spinner fa-spin"></i> Processing...
+            </span>
+          </button>
+
+          <p class="secure-note">
+            <i class="fa-solid fa-lock"></i>
+            Your payment information is encrypted and secure.
+          </p>
+
+          <div style="background:#e8f5ee; padding:10px; border-radius:8px; margin-top:15px; font-size:12px; color:#1e4d2b; text-align:center;">
+            <i class="fa-solid fa-credit-card"></i> Mode test - Carte: 4242 4242 4242 4242
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+
+        <div class="summary-items">
+          <div class="summary-item" *ngFor="let item of orderItems">
+            <div class="item-left">
+              <span class="item-qty">× {{ item.quantity }}</span>
+              <span class="item-name">{{ item.name }}</span>
+            </div>
+            <span class="item-price">{{ item.price * item.quantity }} DT</span>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>{{ subtotal }} DT</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery</span>
+          <span>{{ deliveryFee }} DT</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span>{{ total }} DT</span>
+        </div>
+
+        <div class="trust-badges">
+          <div class="trust-item"><i class="fa-solid fa-truck-fast"></i><span>Delivery 24–48h</span></div>
+          <div class="trust-item"><i class="fa-solid fa-rotate-left"></i><span>Easy returns</span></div>
+          <div class="trust-item"><i class="fa-solid fa-headset"></i><span>24/7 Support</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-col footer-brand">
+      <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+      <p class="footer-tagline">You're the chef, we handle the rest</p>
+      <p class="footer-desc">No more trips to the supermarket. CookEat gives you access to new recipes every month.</p>
+    </div>
+    <div class="footer-col footer-links">
+      <h4>Useful Links</h4>
+      <a routerLink="/">Home</a>
+      <a routerLink="/cart">My Cart</a>
+      <a routerLink="/orders">My Orders</a>
+    </div>
+    <div class="footer-col footer-contact">
+      <h4>Contact Us</h4>
+      <div class="contact-item"><i class="fa-solid fa-phone contact-icon"></i><span>+216 29 019 029</span></div>
+      <div class="contact-item"><i class="fa-solid fa-envelope contact-icon"></i><span>contact@cookeat.tn</span></div>
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+</div>

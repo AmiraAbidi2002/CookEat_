@@ -1,0 +1,279 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar" [class.scrolled]="navScrolled">
+  <div class="logo">
+    <img src="assets/tomato.png" class="logo-img" alt="CookEat Logo" />
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">The Concept</a></li>
+    <li><a href="#menu">On the Menu</a></li>
+    <li><a href="#contact">Need Help?</a></li>
+  </ul>
+  <div class="navbar-right">
+  <!-- If logged in as regular user -->
+  <ng-container *ngIf="isLoggedIn">
+    <a routerLink="/cart" class="nav-icon-link">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+    <a routerLink="/profile" class="btn-client">
+      <i class="fa-solid fa-user"></i> My Profile
+    </a>
+  </ng-container>
+
+  <!-- If not logged in -->
+  <a routerLink="/login" class="btn-client" *ngIf="!isLoggedIn">
+    <i class="fa-solid fa-user"></i> Login
+  </a>
+</div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="hero-wrapper">
+
+  <div class="hero-images-row">
+    <div class="hero-img-item pos-1"><img src="assets/images/img1.jpg" alt=""></div>
+    <div class="hero-img-item pos-2"><img src="assets/images/img2.jpg" alt=""></div>
+    <div class="hero-img-item pos-3"><img src="assets/images/img3.jpg" alt=""></div>
+    <div class="hero-img-item pos-4"><img src="assets/images/img4.jpg" alt=""></div>
+    <div class="hero-img-item pos-5"><img src="assets/images/img5.jpg" alt=""></div>
+  </div>
+
+ <div class="hero-center">
+  <h1>
+    Find your next <br>
+    <span>weekend meal idea</span>
+  </h1>
+
+  <!-- Search bar -->
+  <div class="hero-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search for a recipe... e.g. chicken ramen"
+      (keyup.enter)="onSearch()" />
+    <button type="button" (click)="onSearch()">Search</button>
+  </div>
+
+  <!-- Search results -->
+  <div class="search-results" *ngIf="searchResults.length > 0">
+    <div class="search-result-item" *ngFor="let item of searchResults">
+      <img [src]="item.image_url" [alt]="item.title" class="result-img">
+      <span>{{ item.title }}</span>
+      <button type="button" class="btn-cart-small" [routerLink]="['/meal', item.id]">
+  <i class="fa-solid fa-arrow-right"></i>
+</button>
+    </div>
+  </div>
+
+  <div class="search-no-results" *ngIf="searchQuery && searchResults.length === 0 && searchDone">
+    <i class="fa-solid fa-face-sad-tear"></i> No results for "{{ searchQuery }}"
+  </div>
+
+  <div class="hero-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</div>
+
+  <a href="#features" class="scroll-down-btn">&#8964;</a>
+
+</section>
+<br><br>
+<br>
+<!-- ================= ABOUT SECTION ================= -->
+<section id="about" class="about-section fade-in">
+
+  <div class="about-collage">
+    <div class="collage-card card-tr">
+      <img src="assets/images/img6.jpg" alt="">
+    </div>
+    <div class="collage-card card-cyan">
+      <img src="assets/images/img7.jpg" alt="">
+    </div>
+    <div class="collage-card card-green">
+      <div class="fake-searchbar">
+        <span>🔍</span>
+        <span class="fake-query">easy homemade recipes</span>
+      </div>
+      <img src="assets/images/img8.jpg" alt="">
+    </div>
+    <div class="collage-card card-br">
+      <img src="assets/images/img9.jpg" alt="">
+    </div>
+  </div>
+
+  <div class="about-text">
+    <span class="about-eyebrow">About CookEat</span>
+    <h2>The passion for cooking, simplified for you.</h2>
+    <p>
+      CookEat was born from a simple idea: making home cooking accessible
+      to everyone, stress-free and hassle-free. Every week, we select
+      balanced and flavorful recipes, using fresh, local, and seasonal 
+      ingredients — delivered directly to your home.
+    </p>
+    <p>
+      Whether you're a beginner or a cooking enthusiast, CookEat guides you
+      step by step to transform your daily routine into a true culinary pleasure.
+      Because eating well starts with cooking well.
+    </p>
+    <a href="#menu" class="btn-about">Discover our recipes →</a>
+  </div>
+
+</section>
+<!-- ================= FEATURES BAR ================= -->
+<section id="features" class="features-bar">
+  <div class="feature-item">
+    <div class="feature-icon">🍴</div>
+    <p>Constantly renewed recipes</p>
+  </div>
+  <div class="feature-item">
+    <div class="feature-icon">🛒</div>
+    <p>The joy of cooking without the chore of grocery shopping</p>
+  </div>
+  <div class="feature-item">
+    <div class="feature-icon">🥕</div>
+    <p>100% seasonal vegetables<br>Zero Waste</p>
+  </div>
+  <div class="feature-item">
+    <div class="feature-icon">💰</div>
+    <p>Decreasing prices...</p>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="about" class="how-it-works fade-in">
+  <h2>How does it work?</h2>
+  <p class="section-subtitle">Simple as can be</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-img-wrap">
+        <img src="assets/box.png" alt="Recipe box">
+      </div>
+      <h3>1. Choose your recipes</h3>
+      <p>From a wide selection renewed every month</p>
+    </div>
+    <div class="step">
+      <div class="step-img-wrap">
+        <img src="assets/delivery.png" alt="Delivery" width="80" height="80" style="width:80px; height:80px; object-fit:contain;">
+      </div>
+      <h3>2. Get delivered</h3>
+      <p>Delivered directly to your home, at your chosen date and time</p>
+    </div>
+    <div class="step">
+      <div class="step-img-wrap">
+        <img src="assets/cooking.png" alt="Cooking" width="80" height="80" style="width:80px; height:80px; object-fit:contain;">
+      </div>
+      <h3>3. Cook, create, enjoy</h3>
+      <p>Prepare delicious homemade meals in less than 30 minutes</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MENU CAROUSEL ================= -->
+<section id="menu" class="menu-section fade-in">
+  <h2>Meals that make you hungry</h2>
+  <p class="section-subtitle-cursive">Authentic flavors, easy recipes!</p>
+
+  <div class="meals-container">
+  <div class="meals-slider-wrapper">
+
+    <button class="slider-btn left" (click)="scrollLeft()">‹</button>
+
+    <div class="meals-slider" #slider>
+      <div class="meal-card" *ngFor="let meal of displayedMeals">
+    <img
+      [src]="meal.image_url ? meal.image_url : 'https://placehold.co/300x200?text=' + meal.title"
+      [alt]="meal.title"
+    />
+
+    <div class="meal-info">
+      <h3>{{ meal.title }}</h3>
+      <span>{{ meal.price }} TND</span>
+
+      </div>
+      
+
+      <button class="btn-see-more-small"
+                (click)="navigateToMeal(meal.id)">
+          See more
+        </button>
+        </div>
+        
+</div><!-- SEE MORE BUTTON -->
+        <button class="slider-btn right" (click)="scrollRight()">></button>
+      </div>
+        
+   
+</div>
+
+
+
+
+ 
+</section>
+
+
+<!--Footer-->
+
+<footer id="contact" class="footer">
+
+  <!-- Column 1: Logo + description -->
+  <div class="footer-col footer-brand">
+    <img src="assets/tomato.png" class="footer-logo-img" alt="CookEat Logo" />
+    <p class="footer-tagline">You're the chef, we handle the rest</p>
+    <p class="footer-desc">
+      No more trips to the supermarket and waiting in endless
+      queues. Cookeat gives you access to new recipes every month.
+      Healthy or indulgent, local or international, there's something
+      for every taste.
+    </p>
+  </div>
+
+  <!-- Column 2: Useful links -->
+  <div class="footer-col footer-links">
+    <h4>Useful Links</h4>
+    <a href="#menu">On the Menu</a>
+    <a href="#">My Account</a>
+    <a href="#about">How does it work?</a>
+    <a href="#">Our Commitments</a>
+  </div>
+
+  <!-- Column 3: Contact + social media -->
+  <div class="footer-col footer-contact">
+    <h4>Contact Us</h4>
+
+    <div class="contact-item">
+      <i class="fa-solid fa-phone contact-icon"></i>
+      <span>+216 29 019 029</span>
+    </div>
+
+    <div class="contact-item">
+      <i class="fa-solid fa-envelope contact-icon"></i>
+      <span>contact@cookeat.tn</span>
+    </div>
+
+    <div class="social-links">
+      <a href="#" class="social-btn" aria-label="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+      <a href="#" class="social-btn" aria-label="Facebook">
+        <i class="fa-brands fa-facebook-f"></i>
+      </a>
+      <a href="#" class="social-btn" aria-label="TikTok">
+        <i class="fa-brands fa-tiktok"></i>
+      </a>
+      <a href="#" class="social-btn" aria-label="YouTube">
+        <i class="fa-brands fa-youtube"></i>
+      </a>
+    </div>
+  </div>
+<!-- Hidden admin access — invisible to users -->
+<div class="admin-secret-zone" routerLink="/login">
+</div>
+</footer>
+<!-- GO TO TOP -->
+<button type="button" class="go-to-top" [class.visible]="showGoToTop" (click)="scrollToTop()">↑</button>
