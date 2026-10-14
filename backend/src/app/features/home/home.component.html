@@ -1,0 +1,83 @@
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">
+    Coo
+    <img src="assets/tomato.png" class="logo-img" />
+    kit
+  </div>
+
+  <ul class="nav-links">
+    <li>Le concept</li>
+    <li>Au menu</li>
+    <li>Besoin d’aide ?</li>
+  </ul>
+
+  <button class="btn-client">Espace client</button>
+</nav>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="how-it-works fade-in">
+  <h2>Comment ça marche ?</h2>
+  <p class="subtitle">Simple comme bonjour</p>
+
+  <div class="steps">
+
+    <div class="step">
+      <img src="assets/box.png" alt="">
+      <h3>1. Choisissez vos recettes</h3>
+      <p>Parmi un large choix renouvelé chaque mois</p>
+    </div>
+
+    <div class="step">
+      <img src="assets/delivery.png" alt="">
+      <h3>2. Faites-vous livrer</h3>
+      <p>Livré directement chez vous</p>
+    </div>
+
+    <div class="step">
+      <img src="assets/cooking.png" alt="">
+      <h3>3. Cook, create, enjoy</h3>
+      <p>Préparez des repas savoureux</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial fade-in">
+  <h2>#TheyLovedCookit</h2>
+
+  <div class="testimonial-card">
+    <p>{{ testimonials[currentIndex].text }}</p>
+
+    <div class="author">
+      <img src="assets/tomato.png" class="avatar" />
+      <h4>{{ testimonials[currentIndex].name }}</h4>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button (click)="prev()">←</button>
+    <button (click)="next()">→</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    Coo <img src="assets/tomato.png" class="logo-img" /> kit
+    <p>Le chef c’est vous, le reste c’est nous</p>
+  </div>
+
+  <div class="footer-links">
+    <h4>Liens utiles</h4>
+    <p>Au menu</p>
+    <p>Le concept</p>
+  </div>
+
+  <div class="footer-contact">
+    <h4>Nous contacter</h4>
+    <p>+216 29 019 029</p>
+    <p>contact@cookit.tn</p>
+  </div>
+</footer>

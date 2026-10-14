@@ -1,0 +1,168 @@
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: #f8f8f8;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logo-img {
+  width: 22px;
+  vertical-align: middle;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  font-weight: 500;
+}
+
+.nav-links li {
+  cursor: pointer;
+}
+
+.btn-client {
+  background: #ff4d3d;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+}
+
+/* HOW IT WORKS */
+.how-it-works {
+  text-align: center;
+  padding: 80px 20px;
+  background: #f4f1ea;
+}
+
+.how-it-works h2 {
+  font-size: 32px;
+  color: #1e4d2b;
+}
+
+.subtitle {
+  color: #a97c50;
+  font-style: italic;
+  margin-bottom: 50px;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+}
+
+.step {
+  width: 250px;
+}
+
+.step img {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.step h3 {
+  color: #1e4d2b;
+}
+
+/* TESTIMONIAL */
+.testimonial {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.testimonial-card {
+  background: #cbb99d;
+  padding: 40px;
+  width: 70%;
+  margin: auto;
+  border-radius: 10px;
+  min-height: 120px;
+}
+
+.author {
+  margin-top: 30px;
+}
+
+.avatar {
+  width: 40px;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+.controls button {
+  margin: 0 10px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 50%;
+  background: #1e4d2b;
+  color: white;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 50px;
+  background: #f1f1f1;
+  margin-top: 60px;
+}
+
+.footer h4 {
+  margin-bottom: 10px;
+}
+
+/* ANIMATION */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+  .navbar {
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  
+  .nav-links {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .steps {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .testimonial-card {
+    width: 95%;
+  }
+
+  .footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+}
